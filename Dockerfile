@@ -18,8 +18,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Copier le projet dans le container
 COPY . /var/www/html/
 
+# ➡️ Changer de répertoire et installer les dépendances
+WORKDIR /var/www/html/
+RUN composer install --no-dev --optimize-autoloader && \
 # Modifier le DocumentRoot d'Apache pour pointer sur /public
-RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf && \
+    sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf && \
     sed -i 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf && \
 # Définir les permissions correctes pour les fichiers du projet
     if [ -d /var/www/html/var ]; then chown -R www-data:www-data /var/www/html/var; fi && \
