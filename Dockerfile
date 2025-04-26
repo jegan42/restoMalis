@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libicu-dev \
     libjpeg-dev \
     libpng-dev \
+    libpq-dev \
     libzip-dev \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-install intl zip pdo pdo_mysql pdo_pgsql
