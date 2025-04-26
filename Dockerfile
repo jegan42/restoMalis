@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && docker-php-ext-install intl zip pdo pdo_mysql pdo_pgsql
 
 # Installer Composer (gestionnaire de dépendances PHP)
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN which composer || curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Copier le projet dans le container
 COPY . /var/www/html/
@@ -26,9 +26,9 @@ RUN composer install --no-dev --optimize-autoloader && \
 # Modifier le DocumentRoot d'Apache pour pointer sur /public
     sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf && \
     sed -i 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf && \
-# Définir les permissions correctes pour les fichiers du projet
+# Vérifier et définir les permissions correctes pour les fichiers du projet
     if [ -d /var/www/html/var ]; then chown -R www-data:www-data /var/www/html/var; fi && \
-    chown -R www-data:www-data /var/www/html/public && \
+    if [ -d /var/www/html/public ]; then chown -R www-data:www-data /var/www/html/public; fi && \
     a2enmod rewrite
 
 # Exposer le port 80
