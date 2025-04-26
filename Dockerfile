@@ -2,7 +2,14 @@
 FROM php:8.1-apache
 
 # Installer les extensions PHP nécessaires
-RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libfreetype6-dev \
+    libicu-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libzip-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && docker-php-ext-install intl zip pdo pdo_mysql pdo_pgsql
 
 # Installer Composer (gestionnaire de dépendances PHP)
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -10,8 +17,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Copier le projet dans le container
 COPY . /var/www/html/
 
+# Modifier le DocumentRoot d'Apache pour pointer sur /public
+RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf && \
+    sed -i 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf && \
 # Définir les permissions correctes pour les fichiers du projet
-RUN chown -R www-data:www-data /var/www/html/var /var/www/html/vendor /var/www/html/public && \
+    chown -R www-data:www-data /var/www/html/var /var/www/html/vendor /var/www/html/public && \
 	a2enmod rewrite
 
 # Exposer le port 80
