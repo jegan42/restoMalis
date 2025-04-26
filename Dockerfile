@@ -22,7 +22,7 @@ COPY . /var/www/html/
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf && \
     sed -i 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf && \
 # Définir les permissions correctes pour les fichiers du projet
-    chown -R www-data:www-data /var/www/html/var /var/www/html/vendor /var/www/html/public && \
+    chown -R www-data:www-data /var/www/html/var /var/www/html/public && \
 	a2enmod rewrite
 
 # Exposer le port 80
