@@ -6,7 +6,6 @@ node_modules/
 vendor/
 var/
 tests/
-.env
 .env.*
 README.md
 *.md
