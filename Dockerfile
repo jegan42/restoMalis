@@ -17,6 +17,8 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Copier le projet dans le container
 COPY . /var/www/html/
+# Copier le fichier .env
+COPY .env /var/www/html/.env
 
 # ➡️ Changer de répertoire et installer les dépendances
 WORKDIR /var/www/html/
