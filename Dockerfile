@@ -1,5 +1,6 @@
 FROM php:8.3-apache
 
+# Installer PHP extensions
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libfreetype6-dev \
     libicu-dev \
@@ -11,21 +12,28 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && docker-php-ext-install intl zip pdo pdo_mysql pdo_pgsql \
     && which composer || curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Copier le projet
-COPY . /var/www/html/
-
-# Copier la config Apache
+# Config Apache
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
 
-# Changer uniquement le DocumentRoot
-RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf \
-    && a2enmod rewrite \
-    && chown -R www-data:www-data /var/www/html
+# Activer mod_rewrite
+RUN a2enmod rewrite
 
-WORKDIR /var/www/html
+# Copier code Symfony
+COPY . /var/www/html/
 
-# Installer dépendances
-RUN composer install --optimize-autoloader
+# Donner les bonnes permissions
+RUN chown -R www-data:www-data /var/www/html
+
+# Installer les dépendances PHP
+WORKDIR /var/www/html/
+RUN composer install --optimize-autoloader --no-dev
+
+# Compiler le cache Symfony
+RUN php bin/console cache:clear --no-warmup --env=prod
+RUN php bin/console cache:warmup --env=prod
+
+# Fix permissions cache & log
+RUN chown -R www-data:www-data /var/www/html/var /var/www/html/vendor
 
 EXPOSE 80
 
