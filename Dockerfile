@@ -28,7 +28,7 @@ COPY ./000-default.conf /etc/apache2/sites-available/000-default.conf
 WORKDIR /var/www/html/
 RUN composer clear-cache && composer install --optimize-autoloader && \
 # Modifier le DocumentRoot d'Apache pour pointer sur /public
-    sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf && \
+    sed -i 's!/var/www/html!/var/www/html!g' /etc/apache2/sites-available/000-default.conf && \
     sed -i 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf && \
 # Vérifier et définir les permissions correctes pour les fichiers du projet
     chown -R www-data:www-data /var/www/html && \
