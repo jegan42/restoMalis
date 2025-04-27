@@ -2,7 +2,11 @@
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
+    # Rediriger tout sauf les fichiers et répertoires existants
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php [QSA,L]
+
+    # Sinon renvoyer vers index.php
+    RewriteRule ^ index.php [QSA,L]
 </IfModule>
