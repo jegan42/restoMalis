@@ -38,12 +38,12 @@ final class RestaurantController extends AbstractController
                         mediaType: 'application/json',
                         schema: new OA\Schema(
                             type: 'object',
-                            required: ['name', 'description', 'amOpenningTime', 'pmOpenningTime', 'maxGuest'],
+                            required: ['name', 'description', 'amOpeningTime', 'pmOpeningTime', 'maxGuest'],
                             properties: [
                                 new OA\Property(property: 'name', type: 'string', example: 'My Restaurant'),
                                 new OA\Property(property: 'description', type: 'string', example: 'A nice place'),
-                                new OA\Property(property: 'amOpenningTime', type: 'array', items: new OA\Items(type: 'string', example: '12:00')),
-                                new OA\Property(property: 'pmOpenningTime', type: 'array', items: new OA\Items(type: 'string', example: '18:00')),
+                                new OA\Property(property: 'amOpeningTime', type: 'array', items: new OA\Items(type: 'string', example: '12:00')),
+                                new OA\Property(property: 'pmOpeningTime', type: 'array', items: new OA\Items(type: 'string', example: '18:00')),
                                 new OA\Property(property: 'maxGuest', type: 'integer', example: 50),
                             ]
                         )
@@ -63,8 +63,8 @@ final class RestaurantController extends AbstractController
                                     new OA\Property(property: 'id', type: 'integer', example: '168'),
                                     new OA\Property(property: 'name', type: 'string', example: 'My Restaurant'),
                                     new OA\Property(property: 'description', type: 'string', example: 'Restaurant description'),
-                                    new OA\Property(property: 'amOpenningTime', type: 'array', items: new OA\Items(type: 'string', example: '12:00')),
-                                    new OA\Property(property: 'pmOpenningTime', type: 'array', items: new OA\Items(type: 'string', example: '18:00')),
+                                    new OA\Property(property: 'amOpeningTime', type: 'array', items: new OA\Items(type: 'string', example: '12:00')),
+                                    new OA\Property(property: 'pmOpeningTime', type: 'array', items: new OA\Items(type: 'string', example: '18:00')),
                                     new OA\Property(property: 'maxGuest', type: 'integer', example: '6'),
                                     new OA\Property(property: 'createdAt', type: 'string', format: 'date-time', example: '2025-01-01T00:00:00+00:00'),
                                     new OA\Property(property: 'updatedAt', type: 'string', format: 'date-time', example: '2025-01-01T00:00:00+00:00'),
@@ -90,17 +90,13 @@ final class RestaurantController extends AbstractController
             $data['bookings'] ??= [];
 
             // serializer directement
-            // $restaurant = $this->serializer->deserialize(json_encode($data), Restaurant::class, 'json');
+            $restaurant = $this->serializer->deserialize(json_encode($data), Restaurant::class, 'json');
 
             // sans securisation des champs vides
             // $restaurant = $this->serializer->deserialize($request->getContent(), Restaurant::class, 'json');
-            $restaurant = new Restaurant();
-            $restaurant->setName($data['name']);
-            $restaurant->setDescription($data['description']);
-            $now = new \DateTimeImmutable();
             $restaurant->setAmOpeningTime($data['amOpeningTime']);
             $restaurant->setPmOpeningTime($data['pmOpeningTime']);
-            $restaurant->setMaxGuest($data['maxGuest']);
+            $now = new \DateTimeImmutable();
             $restaurant->setCreatedAt($now);
             $restaurant->setUpdatedAt($now);
     
@@ -154,8 +150,8 @@ final class RestaurantController extends AbstractController
                                     new OA\Property(property: 'id', type: 'integer', example: '168'),
                                     new OA\Property(property: 'name', type: 'string', example: 'My Restaurant'),
                                     new OA\Property(property: 'description', type: 'string', example: 'Restaurant description'),
-                                    new OA\Property(property: 'amOpenningTime', type: 'array', items: new OA\Items(type: 'string', example: '12:00')),
-                                    new OA\Property(property: 'pmOpenningTime', type: 'array', items: new OA\Items(type: 'string', example: '18:00')),
+                                    new OA\Property(property: 'amOpeningTime', type: 'array', items: new OA\Items(type: 'string', example: '12:00')),
+                                    new OA\Property(property: 'pmOpeningTime', type: 'array', items: new OA\Items(type: 'string', example: '18:00')),
                                     new OA\Property(property: 'maxGuest', type: 'integer', example: '6'),
                                     new OA\Property(property: 'createdAt', type: 'string', format: 'date-time', example: '2023-10-01T12:00:00Z'),
                                     new OA\Property(property: 'updatedAt', type: 'string', format: 'date-time', example: '2023-10-01T12:00:00Z'),
@@ -221,8 +217,8 @@ final class RestaurantController extends AbstractController
                             new OA\Property(property: 'id', type: 'integer', example: '168'),
                             new OA\Property(property: 'name', type: 'string', example: 'My Restaurant'),
                             new OA\Property(property: 'description', type: 'string', example: 'Restaurant description'),
-                            new OA\Property(property: 'amOpenningTime', type: 'array', items: new OA\Items(type: 'string', example: '12:00')),
-                            new OA\Property(property: 'pmOpenningTime', type: 'array', items: new OA\Items(type: 'string', example: '18:00')),
+                            new OA\Property(property: 'amOpeningTime', type: 'array', items: new OA\Items(type: 'string', example: '12:00')),
+                            new OA\Property(property: 'pmOpeningTime', type: 'array', items: new OA\Items(type: 'string', example: '18:00')),
                             new OA\Property(property: 'maxGuest', type: 'integer', example: '6'),
                             new OA\Property(property: 'updatedAt', type: 'string', format: 'date-time', example: '2023-10-01T12:00:00Z'),
                         ]
@@ -242,8 +238,8 @@ final class RestaurantController extends AbstractController
                                     new OA\Property(property: 'id', type: 'integer', example: '168'),
                                     new OA\Property(property: 'name', type: 'string', example: 'My Restaurant'),
                                     new OA\Property(property: 'description', type: 'string', example: 'Restaurant description'),
-                                    new OA\Property(property: 'amOpenningTime', type: 'array', items: new OA\Items(type: 'string', example: '12:00')),
-                                    new OA\Property(property: 'pmOpenningTime', type: 'array', items: new OA\Items(type: 'string', example: '18:00')),
+                                    new OA\Property(property: 'amOpeningTime', type: 'array', items: new OA\Items(type: 'string', example: '12:00')),
+                                    new OA\Property(property: 'pmOpeningTime', type: 'array', items: new OA\Items(type: 'string', example: '18:00')),
                                     new OA\Property(property: 'maxGuest', type: 'integer', example: '6'),
                                     new OA\Property(property: 'createdAt', type: 'string', format: 'date-time', example: '2023-10-01T12:00:00Z'),
                                     new OA\Property(property: 'updatedAt', type: 'string', format: 'date-time', example: '2023-10-01T12:00:00Z'),
