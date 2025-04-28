@@ -89,13 +89,18 @@ final class RestaurantController extends AbstractController
             $data['menus'] ??= [];
             $data['bookings'] ??= [];
 
-            $restaurant = $this->serializer->deserialize(json_encode($data), Restaurant::class, 'json');
+            // serializer directement
+            // $restaurant = $this->serializer->deserialize(json_encode($data), Restaurant::class, 'json');
 
             // sans securisation des champs vides
             // $restaurant = $this->serializer->deserialize($request->getContent(), Restaurant::class, 'json');
+            $restaurant = new Restaurant();
+            $restaurant->setName($data['name']);
+            $restaurant->setDescription($data['description']);
             $now = new \DateTimeImmutable();
             $restaurant->setAmOpeningTime($data['amOpeningTime']);
             $restaurant->setPmOpeningTime($data['pmOpeningTime']);
+            $restaurant->setMaxGuest($data['maxGuest']);
             $restaurant->setCreatedAt($now);
             $restaurant->setUpdatedAt($now);
     
