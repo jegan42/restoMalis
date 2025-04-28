@@ -38,9 +38,13 @@ final class RestaurantController extends AbstractController
                         mediaType: 'application/json',
                         schema: new OA\Schema(
                             type: 'object',
+                            required: ['name', 'description', 'amOpenningTime', 'pmOpenningTime', 'maxGuest'],
                             properties: [
                                 new OA\Property(property: 'name', type: 'string', example: 'My Restaurant'),
-                                new OA\Property(property: 'description', type: 'string', example: 'Restaurant description'),
+                                new OA\Property(property: 'description', type: 'string', example: 'A nice place'),
+                                new OA\Property(property: 'amOpenningTime', type: 'array', items: new OA\Items(type: 'string', example: '12:00')),
+                                new OA\Property(property: 'pmOpenningTime', type: 'array', items: new OA\Items(type: 'string', example: '18:00')),
+                                new OA\Property(property: 'maxGuest', type: 'integer', example: 50),
                             ]
                         )
                     )
@@ -78,8 +82,20 @@ final class RestaurantController extends AbstractController
     public function new(Request $request): JsonResponse
     {
         try {
-            $restaurant = $this->serializer->deserialize($request->getContent(), Restaurant::class, 'json');
-            $restaurant->setCreatedAt(new DateTimeImmutable());
+            $data = json_decode($request->getContent(), true);
+    
+            // Sécuriser l'initialisation des champs vides
+            $data['pictures'] ??= [];
+            $data['menus'] ??= [];
+            $data['bookings'] ??= [];
+
+            $restaurant = $this->serializer->deserialize(json_encode($data), Restaurant::class, 'json');
+
+            // sans securisation des champs vides
+            // $restaurant = $this->serializer->deserialize($request->getContent(), Restaurant::class, 'json');
+            $now = new \DateTimeImmutable();
+            $restaurant->setCreatedAt($now);
+            $restaurant->setUpdatedAt($now);
     
             $this->manager->persist($restaurant);
             $this->manager->flush();
