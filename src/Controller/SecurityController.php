@@ -32,6 +32,8 @@ final class SecurityController extends AbstractController
                         schema: new OA\Schema(
                             type: 'object',
                             properties: [
+                                new OA\Property(property: 'firstname', type: 'string', example: 'John'),
+                                new OA\Property(property: 'lastname', type: 'string', example: 'Doe'),
                                 new OA\Property(property: 'email', type: 'string', example: 'user@example.com'),
                                 new OA\Property(property: 'password', type: 'string', example: 'securepassword123'),
                             ]
@@ -93,15 +95,26 @@ final class SecurityController extends AbstractController
 
     public function register(Request $request, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
-        $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
-        $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
-        $user->setCreatedAt(new DateTimeImmutable());
-        $this->manager->persist($user);
-        $this->manager->flush();
-        return new JsonResponse(
-            ['user'  => $user->getUserIdentifier(), 'apiToken' => $user->getApiToken(), 'roles' => $user->getRoles()],
-            Response::HTTP_CREATED
-        );
+        try {
+            $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
+            $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
+            $user->setCreatedAt(new DateTimeImmutable());
+            $this->manager->persist($user);
+            $this->manager->flush();
+            return new JsonResponse(
+                ['user' => $user->getUserIdentifier(), 'apiToken' => $user->getApiToken(), 'roles' => $user->getRoles()],
+                Response::HTTP_CREATED
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'message' => 'An error occurred during user registration',
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     #[Route('/login', name: 'login', methods: 'POST')]
