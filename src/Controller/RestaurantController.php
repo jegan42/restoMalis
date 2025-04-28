@@ -77,20 +77,31 @@ final class RestaurantController extends AbstractController
     ]
     public function new(Request $request): JsonResponse
     {
-        $restaurant = $this->serializer->deserialize($request->getContent(), Restaurant::class, 'json');
-        $restaurant->setCreatedAt(new DateTimeImmutable());
-
-        $this->manager->persist($restaurant);
-        $this->manager->flush();
-
-        $responseData = $this->serializer->serialize($restaurant, 'json');
-        $location = $this->urlGenerator->generate(
-            'app_api_restaurant_show',
-            ['id' => $restaurant->getId()],
-            UrlGeneratorInterface::ABSOLUTE_URL,
-        );
-
-        return new JsonResponse($responseData, Response::HTTP_CREATED, ["Location" => $location], true);
+        try {
+            $restaurant = $this->serializer->deserialize($request->getContent(), Restaurant::class, 'json');
+            $restaurant->setCreatedAt(new DateTimeImmutable());
+    
+            $this->manager->persist($restaurant);
+            $this->manager->flush();
+    
+            $responseData = $this->serializer->serialize($restaurant, 'json');
+            $location = $this->urlGenerator->generate(
+                'app_api_restaurant_show',
+                ['id' => $restaurant->getId()],
+                UrlGeneratorInterface::ABSOLUTE_URL,
+            );
+    
+            return new JsonResponse($responseData, Response::HTTP_CREATED, ["Location" => $location], true);
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'message' => 'An error occurred during user registration',
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     #[Route('/{id}', name: 'show', methods: 'GET')]
