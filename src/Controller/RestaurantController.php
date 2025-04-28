@@ -66,8 +66,8 @@ final class RestaurantController extends AbstractController
                                     new OA\Property(property: 'amOpenningTime', type: 'array', items: new OA\Items(type: 'string', example: '12:00')),
                                     new OA\Property(property: 'pmOpenningTime', type: 'array', items: new OA\Items(type: 'string', example: '18:00')),
                                     new OA\Property(property: 'maxGuest', type: 'integer', example: '6'),
-                                    new OA\Property(property: 'createdAt', type: 'string', format: 'date-time', example: '2023-10-01T12:00:00Z'),
-                                    new OA\Property(property: 'updatedAt', type: 'string', format: 'date-time', example: '2023-10-01T12:00:00Z'),
+                                    new OA\Property(property: 'createdAt', type: 'string', format: 'date-time', example: '2025-01-01T00:00:00+00:00'),
+                                    new OA\Property(property: 'updatedAt', type: 'string', format: 'date-time', example: '2025-01-01T00:00:00+00:00'),
                                     new OA\Property(property: 'pictures', type: 'array', items: new OA\Items(type: 'array', items: new OA\Items(type: 'string', example: 'picture 1'))),
                                     new OA\Property(property: 'menus', type: 'array', items: new OA\Items(type: 'array', items: new OA\Items(type: 'string', example: 'menu 1'))),
                                     new OA\Property(property: 'bookings', type: 'array', items: new OA\Items(type: 'array', items: new OA\Items(type: 'string', example: 'booking 1'))),
@@ -94,6 +94,8 @@ final class RestaurantController extends AbstractController
             // sans securisation des champs vides
             // $restaurant = $this->serializer->deserialize($request->getContent(), Restaurant::class, 'json');
             $now = new \DateTimeImmutable();
+            $restaurant->setAmOpeningTime($data['amOpeningTime']);
+            $restaurant->setPmOpeningTime($data['pmOpeningTime']);
             $restaurant->setCreatedAt($now);
             $restaurant->setUpdatedAt($now);
     
